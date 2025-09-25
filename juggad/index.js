@@ -7,9 +7,9 @@ async function ping() {
   try {
     const response = await fetch(URL);
     const ok = response.status === 200;
-    console.log("Pinged URL:", URL, "Status OK:", ok);
+    console.log(new Date().toISOString(), "Pinged URL:", URL, "Status OK:", ok);
   } catch (err) {
-    console.error("Ping failed:", err);
+    console.error(new Date().toISOString(), "Ping failed:", err);
   }
 }
 
@@ -18,13 +18,19 @@ async function ping() {
 
   setInterval(async () => {
     await ping();
-  }, 5 * 60 * 1000);
+  }, 10 * 60 * 1000);
 })();
 
 const port = process.env.PORT || 3000;
+
 http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Ping service is running\n");
+  if (req.url === "/") {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Halo\n");
+  } else {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Not Found\n");
+  }
 }).listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
